@@ -15,10 +15,10 @@
     TX  -> GPIO33         unused by this sketch; only needed for UART config/distance later
     RX  -> GPIO18         unused by this sketch
   As built, the radar's 5-pin header is soldered straight into the outer row, which is
-  what puts TX and RX on 33 and 18. See BUILD.md.
+  what puts TX and RX on 33 and 18.
 
   Arduino IDE: board "LOLIN S2 Mini" (esp32 by Espressif), USB CDC On Boot: Enabled.
-  Upload: hold 0, tap RST, release 0, upload, then press RST to run the new firmware.
+  Full build steps, including the first-upload button trick, are in BUILD.md at the repo root.
 */
 
 #include "USB.h"
@@ -29,7 +29,7 @@ USBHIDMouse Mouse;
 USBHIDKeyboard Keyboard;
 
 // ---- Settings ----------------------------------------------------------------
-const bool     DRY_RUN               = false;    // true = log only, no mouse/keyboard. Flip to false after tuning.
+const bool     DRY_RUN               = false;    // true = log only, no mouse/keyboard. Handy for testing.
 const bool     ENABLE_LOCK_ON_LEAVE  = true;     // send Win+L after the room is empty
 const uint32_t PRESENT_CONFIRM_MS    = 300;      // OUT must stay high this long before we call it "arrived"
 const uint32_t LOCK_AFTER_ABSENT_MS  = 60000;    // OUT low this long = "left" (sensor adds its own hold time on top)
