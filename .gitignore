@@ -1,0 +1,15 @@
+# Personal photos of the room and desk
+*.jpg
+*.jpeg
+
+# Presence logs record when someone was at the desk
+tools/presence-log-*.csv
+
+# Slicer project files carry an account id; the STL files are the published models
+*.3mf
+
+# Duplicated working output
+Claude outputs/
+
+# Arduino build output
+build/
