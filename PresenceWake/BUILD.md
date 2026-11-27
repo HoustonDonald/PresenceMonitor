@@ -108,7 +108,7 @@ missing, press the bare switch with something non-metal.
 
 ```powershell
 $sp = New-Object System.IO.Ports.SerialPort "COM4",115200
-$sp.DtrEnable = $true; $sp.RtsEnable = $false; $sp.ReadTimeout = 500
+$sp.DtrEnable = $true; $sp.RtsEnable = $true; $sp.ReadTimeout = 500
 try {
   $sp.Open(); $end = (Get-Date).AddSeconds(60)
   while ((Get-Date) -lt $end) {
@@ -118,6 +118,20 @@ try {
 ```
 
 `DtrEnable` matters: without it the board sends nothing. Change `AddSeconds(60)` for a longer run.
+
+Keep `RtsEnable` set to `$true`. With RTS off, closing the port left the board in upload mode
+(COM3, no keyboard or mouse) both times it was tried, so the sketch stopped running until the
+board was reset. The ESP32 core treats a particular DTR/RTS sequence as "restart into the
+bootloader" (`_onLineState` in the core's `USBCDC.cpp`), and opening with RTS off appears to
+complete it on close.
+
+If the board is ever found on COM3 with no keyboard or mouse, this restarts it without a button
+press:
+
+```powershell
+$esp = "$env:LOCALAPPDATA\Arduino15\packages\esp32\tools\esptool_py\5.3.1\esptool.exe"
+& $esp --chip esp32s2 --port COM3 --after hard-reset read-mac
+```
 
 For a longer session with labelled test phases and a CSV log, use `tools\Test-PresenceWake.ps1`.
 Its header comment explains the keys.

@@ -48,7 +48,7 @@ function Write-Log([string]$type, [string]$line) {
 function Open-Port {
     $p = New-Object System.IO.Ports.SerialPort $Port, $Baud, 'None', 8, 'One'
     $p.DtrEnable = $true    # some USB CDC devices hold output until DTR is asserted
-    $p.RtsEnable = $false   # avoid DTR/RTS patterns that can reset an ESP32 into download mode
+    $p.RtsEnable = $true    # with RTS off, closing the port left this board in upload mode (see BUILD.md)
     $p.Open()
     return $p
 }
