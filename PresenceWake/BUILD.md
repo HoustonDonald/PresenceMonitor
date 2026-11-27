@@ -30,10 +30,19 @@ if the PC happens to be unlocked. The board never types a password.
 The radar adds its own hold time before OUT drops. Measured here, OUT went low about 6 seconds
 after leaving, so the lock lands roughly 66 seconds after walking away.
 
-## Blank the screen after locking (Windows setting)
+## Optional: blank the screen after locking (Windows setting)
+
+Not in use on this PC. It was tried on 2026-11-26 and undone the same day; the PC is back on the
+"before" values at the end of this section.
+
+The downside that got it undone: the lock-screen timeout keeps applying after you come back. The
+board wakes the screen once, at the moment you arrive. If you do not sign in within the timeout,
+the screen goes dark again, and the board sends nothing more while you stay in the room, so you
+have to press a key yourself. A longer `VIDEOCONLOCK` value gives more time to sign in; that was
+not tried.
 
 The board only locks the PC. It cannot turn the display off, because there is no keyboard key for
-that. Windows does it, with two display settings on the active power plan:
+that. Windows can, with two display settings on the active power plan:
 
 ```powershell
 powercfg /setacvalueindex SCHEME_CURRENT SUB_VIDEO VIDEOCONLOCK 15
@@ -186,7 +195,7 @@ The heartbeat does not show the `DRY_RUN` value. Only the startup banner does.
 | Sitting at the desk, 3 minutes | No dropouts |
 | Empty room, up to 4.5 minutes | No false presence |
 | Return after a lock | Screen woke with the PIN box showing |
-| Lock to display off, with the Windows settings above | 16 s, from Windows' own display-state event |
+| Lock to display off, with the optional Windows settings above | 16 s, from Windows' own display-state event |
 | Return after the display went off | Screen woke with the PIN box showing (seen by eye, not logged) |
 
 ## Not tested
