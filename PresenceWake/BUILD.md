@@ -1,7 +1,7 @@
 # PresenceWake: build, flash and test
 
 How to compile, upload and check `PresenceWake.ino` on this machine. Everything here was run
-against the real board on 2026-11-23 to 2026-11-25 unless a line says otherwise.
+against the real board on 2026-11-23 to 2026-11-26 unless a line says otherwise.
 
 ## What it does
 
@@ -29,6 +29,36 @@ if the PC happens to be unlocked. The board never types a password.
 
 The radar adds its own hold time before OUT drops. Measured here, OUT went low about 6 seconds
 after leaving, so the lock lands roughly 66 seconds after walking away.
+
+## Blank the screen after locking (Windows setting)
+
+The board only locks the PC. It cannot turn the display off, because there is no keyboard key for
+that. Windows does it, with two display settings on the active power plan:
+
+```powershell
+powercfg /setacvalueindex SCHEME_CURRENT SUB_VIDEO VIDEOCONLOCK 15
+powercfg /setacvalueindex SCHEME_CURRENT SUB_VIDEO VIDEOIDLE 3600
+powercfg /setactive SCHEME_CURRENT
+```
+
+| Setting | Value | Meaning |
+|---|---|---|
+| `VIDEOCONLOCK` | 15 s | Display off this long after the PC locks. Hidden in the Settings app |
+| `VIDEOIDLE` | 3600 s | Display off after this long with no input while unlocked |
+
+Both are needed. With `VIDEOIDLE` at 0 ("never", how this PC was set), the lock screen stayed lit
+for over 5 minutes even with `VIDEOCONLOCK` at 15. With `VIDEOIDLE` at 3600 the display went off
+16 seconds after the lock. These are the plugged-in (AC) values; use `/setdcvalueindex` for
+battery. No admin prompt is needed.
+
+To check the values, or to go back to how this PC was before:
+
+```powershell
+powercfg /qh SCHEME_CURRENT SUB_VIDEO
+powercfg /setacvalueindex SCHEME_CURRENT SUB_VIDEO VIDEOCONLOCK 60
+powercfg /setacvalueindex SCHEME_CURRENT SUB_VIDEO VIDEOIDLE 0
+powercfg /setactive SCHEME_CURRENT
+```
 
 ## Wiring as built
 
@@ -156,6 +186,8 @@ The heartbeat does not show the `DRY_RUN` value. Only the startup banner does.
 | Sitting at the desk, 3 minutes | No dropouts |
 | Empty room, up to 4.5 minutes | No false presence |
 | Return after a lock | Screen woke with the PIN box showing |
+| Lock to display off, with the Windows settings above | 16 s, from Windows' own display-state event |
+| Return after the display went off | Screen woke with the PIN box showing (seen by eye, not logged) |
 
 ## Not tested
 
